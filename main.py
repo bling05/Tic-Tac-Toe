@@ -1,4 +1,3 @@
-from json.encoder import INFINITY
 import time
 import random
 
@@ -6,15 +5,16 @@ board = [['_', '_', '_'],
          ['_', '_', '_'], 
          ['_', '_', '_']]
 
-board_coors = {'TL':[0,0], 'T':[0,1], 'TR':[0,2],
+board_coors = {'TL':[0,0], 'T':[0,1], 'TR':[0,2], # Lookup table to convert player input to board indices
                'L': [1,0], 'C':[1,1], 'R': [1,2],
                'BL':[2,0], 'B':[2,1], 'BR':[2,2]}
+temp_board = board
 
 scores = {'tie': 0, 'X': 1, 'O': -1} # X is always the MAXIMIZING player, O is always MINIMIZING
 
 def main():
     global board
-    temp_board = board
+    temp_board = board # Saves empty board to reset once game ends
 
     while True:
         global player
@@ -42,8 +42,8 @@ def main():
                 continue
             player_to_move = ai
             print_board()
+            time.sleep(0.5)
             print('\nAI is moving...')
-            time.sleep(2)
 
         if check_winner() != None:
             print_board()
@@ -60,22 +60,35 @@ def main():
             print_board()
             declare_result(check_winner())
             board = temp_board
+            time.sleep(1.5)
             next_turn = False
                 
 
 def best_move():
-    best_score = -INFINITY
+    if ai == 'X':
+        best_score = -1000 # Sets initial best score as worst case
+        other_maximizing = False # If ai is X (maximizing player), checks each tile for worst case scenario with minimax (minimum score)
+    else:
+        best_score = 1000
+        other_maximizing = False
+
     for row in range(3):
         for col in range(3):
             if board[row][col] == '_':
                 board[row][col] = ai
-                score = minimax(ai != 'X')
+                score = minimax(other_maximizing)
                 board[row][col] = '_'
-                if score > best_score:
-                    best_score = score
-                    best_move_row = row
-                    best_move_col = col
-    
+                if ai == 'X':
+                    if score > best_score:
+                        best_score = score
+                        best_move_row = row
+                        best_move_col = col
+                else:
+                    if score < best_score:
+                        best_score = score
+                        best_move_row = row
+                        best_move_col = col
+                        
     if empty_board():
         best_move_row = random.choice([0,2])
         best_move_col = random.choice([0,2])
@@ -87,7 +100,7 @@ def minimax(is_maximizing):
     if result:
         return scores[result] # If there is an end-game state, no need to look further!
     if is_maximizing == True: # AI is the maximizing player
-        best_score = -INFINITY
+        best_score = -1000
         for row in range(3):
             for col in range(3):
                 if board[row][col] == '_':
@@ -100,13 +113,13 @@ def minimax(is_maximizing):
 
 
     else:
-        best_score = INFINITY
+        best_score = 1000
         for row in range(3):
-            for ele in range(3):
-                if board[row][ele] == '_':
-                    board[row][ele] = player
+            for col in range(3):
+                if board[row][col] == '_':
+                    board[row][col] = player
                     score = minimax(True)
-                    board[row][ele] = '_'
+                    board[row][col] = '_'
                     best_score = min(score, best_score)
 
         return best_score
@@ -145,16 +158,16 @@ def check_winner():
 
 def declare_result(result):
     if result == 'tie':
-        print("Tie!")
+        print("Tie!\n")
     elif result == player:
-        print("Player win!")
+        print("Player win!\n")
     elif result == ai:
-        print("AI win! The robot revolution is nigh 😈") 
+        print("AI win! The robot revolution is nigh 😈\n") 
 
 def print_board():
     print(chr(27) + "[2J")
     for row in board:
         print(*row)
 
-
-main()
+while True:
+    main()
