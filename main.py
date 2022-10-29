@@ -11,8 +11,8 @@ board_coors = {'TL':[0,0], 'T':[0,1], 'TR':[0,2], # Lookup table to convert play
 temp_board = board
 
 choices = {'TL': 'TL', 'T': 'T ', 'TR': 'TR',
-             'L' : 'L ', 'C': 'C ', 'R' : 'R ' ,
-             'BL': 'BL', 'B': 'B ', 'BR': 'BR'}
+           'L' : 'L ', 'C': 'C ', 'R' : 'R ' ,
+           'BL': 'BL', 'B': 'B ', 'BR': 'BR'}
 
 scores = {'tie': 0, 'X': 1, 'O': -1} # X is always the MAXIMIZING player, O is always MINIMIZING
 
@@ -37,6 +37,7 @@ def main():
     while next_turn:
         if player_to_move == player:
             print_board()
+
             move = input(f"\nMake your move:\n{choices['TL']} {choices['T']} {choices['TR']}\n{choices['L']} {choices['C']} {choices['R']}\n{choices['BL']} {choices['B']} {choices['BR']}\n\n").upper()
             row = board_coors[move][0]
             col = board_coors[move][1]
@@ -45,6 +46,7 @@ def main():
                 choices[move] = '  '
             else: 
                 continue
+            
             player_to_move = ai
             print_board()
             time.sleep(0.5)
