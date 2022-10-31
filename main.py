@@ -63,7 +63,7 @@ def best_move():
         other_maximizing = False # If ai is X (maximizing player), checks each tile for worst case scenario with minimax (minimum score)
     else:
         best_score = 1000
-        other_maximizing = False
+        other_maximizing = True
 
     for row in range(3):
         for col in range(3):
@@ -92,7 +92,7 @@ def minimax(is_maximizing):
     result = check_winner()
     if result:
         return scores[result] # If there is an end-game state, no need to look further!
-    if is_maximizing == True: # AI is the maximizing player
+    if is_maximizing == True: # AI is the maximizing player X
         best_score = -1000
         for row in range(3):
             for col in range(3):
@@ -103,13 +103,13 @@ def minimax(is_maximizing):
                     best_score = max(score, best_score)
                     
         return best_score
-        
+
     else:
         best_score = 1000
         for row in range(3):
             for col in range(3):
                 if board[row][col] == '_':
-                    board[row][col] = player
+                    board[row][col] = ai
                     score = minimax(True)
                     board[row][col] = '_'
                     best_score = min(score, best_score)
